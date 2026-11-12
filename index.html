@@ -66,15 +66,24 @@
   .cat{flex:0 0 auto;font-weight:700;font-size:.72rem;border:2.5px solid #d9c8b0;background:rgba(255,252,246,.94);
         border-radius:999px;padding:4px 11px;color:#6b5b4a;cursor:pointer}
   .cat.on{background:#ffb64d;border-color:#e29b2c;color:#5a3d1c}
-  #catalog{flex:0 0 auto;height:128px;overflow-y:auto;background:rgba(255,252,246,.9);
+  #catalog{flex:0 0 auto;height:148px;overflow-y:auto;background:rgba(255,252,246,.9);
         border-top:2.5px solid #d9c8b0;padding:6px}
-  #catInner{display:grid;grid-template-columns:repeat(auto-fill,minmax(72px,1fr));gap:7px}
-  .fcard{border:2.5px solid #e0c9a0;border-radius:12px;background:#fff;padding:4px 3px;text-align:center;cursor:grab}
+  #catInner{display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:9px}
+  .fcard{border:3px solid #e0c9a0;border-radius:16px;background:#fff;padding:6px 4px;text-align:center;cursor:grab;transition:transform .12s}
+  .fcard:active{transform:scale(.92)}
+  .fcard svg{border-radius:12px}
+  .fcard .nm{font-size:.66rem;font-weight:800;color:#5a4a3a;line-height:1.15;margin-top:3px}
+  .fcard .cst{font-size:.6rem;color:#b0732a;font-weight:800}
+  .fitem{transform-box:fill-box;transform-origin:center}
+  .fitem.selglow{animation:selGlow 1.2s ease-in-out infinite}
+  @keyframes selGlow{0%,100%{filter:drop-shadow(0 0 4px #ffb64d) drop-shadow(0 0 10px rgba(255,182,77,.55))}50%{filter:drop-shadow(0 0 10px #ffd98f) drop-shadow(0 0 20px rgba(255,182,77,.85))}}
+  .fitem.poppin{animation:popIn .35s cubic-bezier(.2,1.6,.4,1)}
+  @keyframes popIn{0%{transform-box:fill-box;transform-origin:center;opacity:0;scale:.4}100%{opacity:1;scale:1}}
+  .helperChip{position:absolute;left:50%;transform:translateX(-50%);bottom:8px;z-index:28;background:rgba(255,253,246,.95);
+    border:2.5px solid #9cc4d4;border-radius:999px;padding:6px 14px;font-size:.74rem;font-weight:800;color:#28516b;
+    box-shadow:0 3px 8px rgba(30,70,100,.15);pointer-events:none;white-space:nowrap}
   .fcard:active{transform:scale(.94)}
-  .fcard svg{width:100%;height:auto;display:block;background:#f7f1e4;border-radius:8px}
-  .fcard .nm{font-size:.56rem;font-weight:700;color:#5a4a3a;line-height:1.1;margin-top:2px}
-  .fcard .cst{font-size:.55rem;color:#b0732a;font-weight:700}
-  #searchRow{display:flex;gap:6px;padding:4px 8px}
+    #searchRow{display:flex;gap:6px;padding:4px 8px}
   #searchIn{flex:1;font-family:inherit;font-weight:600;font-size:.8rem;border:2.5px solid #d9c8b0;
         border-radius:999px;padding:6px 12px;background:#fffdf8;color:#5a4a3a;outline:none}
 
@@ -85,8 +94,9 @@
   #insp.show{display:block}
   #insp .t{font-weight:700;font-size:.8rem;color:#5a4a3a;margin-bottom:5px;line-height:1.15}
   #insp .row{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:6px}
-  .mini{flex:1;font-weight:700;font-size:.72rem;border:2px solid #d9c8b0;border-radius:9px;background:#fff;
-        padding:5px 2px;cursor:pointer;color:#6b5b4a;text-align:center}
+  .mini{flex:1;font-weight:800;font-size:.8rem;border:2.5px solid #d9c8b0;border-radius:12px;background:#fff;
+        padding:9px 2px;cursor:pointer;color:#6b5b4a;text-align:center}
+  .mini:active{background:#ffd98f}
   .mini.act{background:#ffb64d;border-color:#e29b2c}
   .dot{width:22px;height:22px;border-radius:50%;border:2.5px solid #fffdf6;cursor:pointer;
        box-shadow:0 1px 3px rgba(0,0,0,.25)}
@@ -187,6 +197,7 @@
     <div id="roomWrap" style="display:none">
       <svg id="roomSvg" xmlns="http://www.w3.org/2000/svg"></svg>
       <button class="ibtn" id="roomBack" style="position:absolute;left:8px;top:8px">◀ Plan</button>
+      <div class="helperChip" id="helperChip">👆 Pick furniture below — tap a card to add it!</div>
       <button class="ibtn" id="roomSetBtn" style="position:absolute;right:8px;top:calc(48px + env(safe-area-inset-top))">🎨 Room</button>
       <div style="position:absolute;right:8px;bottom:10px;display:flex;gap:6px;flex-direction:column;align-items:flex-end">
         <button class="ibtn" id="photoBtn">📸 Photo</button>
@@ -221,11 +232,9 @@
 
     <div id="insp">
       <div class="t" id="inName">Item</div>
-      <div class="row"><button class="mini" id="inRot">🔄 rotate</button><button class="mini" id="inDup">⧉ copy</button></div>
-      <div class="row"><button class="mini" id="inUp">⬆ layer</button><button class="mini" id="inDown">⬇ layer</button></div>
-      <div class="row" id="inSizeRow"><span class="mini" style="background:none;flex:0">size</span>
-        <input type="range" id="inSize" min="70" max="150" value="100"></div>
-      <div class="t" id="inColT">Colour</div>
+      <div class="row"><button class="mini" id="inRot">🔄 Turn</button><button class="mini" id="inDup">⧉ Copy</button></div>
+      <div class="row" id="inSizeRow"><button class="mini" id="inSizeM">➖ Smaller</button><button class="mini" id="inSizeP">➕ Bigger</button></div>
+      <div class="t" id="inColT">🎨 Colour</div>
       <div class="row" id="inCols"></div>
       <button class="mini" id="inDel" style="color:#b06a5a;width:100%">🗑 Remove</button>
     </div>
@@ -698,6 +707,15 @@ function cap(h){
   return c[h]||h;
 }
 
+/* cheerful default variant per item — kids pick shape first, colour after */
+const DEFVAR={sofa:4,sectional:4,armchair:4,coffee:0,side:0,tvstand:0,shelfbook:0,ottoman:4,fireplace:0,
+ rugRect:6,rugRound:6,plantBig:0,bedSingle:0,bedDouble:0,bedBunk:0,bedCanopy:0,wardrobe:0,dresser:0,
+ nightstand:0,mirror:0,desk:0,lampFloor:0,counter:0,island:0,sink:0,fridge:0,stove:0,diningT:0,diningSet:0,
+ kitchenShelf:0,tub:0,shower:0,toilet:0,vanity:0,towel:4,pcdesk:0,gamingset:0,officechair:4,gamechair:0,
+ bookshelfTall:0,console:0,telescope:0,ledstrip:0,painting:0,poster:0,clock:0,vase:4,candles:0,plantS:0,
+ books:0,cushion:6,teddy:0,sculpture:0,wallsh:0,chandelier:0,ceil:0,pendant:4,string:0,lampDesk:0,
+ beanbag:4,toybox:0,playmat:4,tent:4,kidbed:0,plush:0,kidshelf:4,petbed:4};
+function defVar(id){return clamp(DEFVAR[id]||0,0,(FByID[id]&&FByID[id].vars.length?FByID[id].vars.length-1:0));}
 const CATS=[['living','🛋️ Living'],['bedroom','🛏️ Bedroom'],['kitchen','🍳 Kitchen'],['bath','🛁 Bathroom'],['study','💻 Study & Gaming'],['decor','🖼️ Decor'],['light','💡 Lighting'],['kids','🧸 Kids']];
 const FByID={};FURN.forEach(f=>FByID[f.id]=f);
 const CATALOG_COUNT=FURN.reduce((a,f)=>a+f.vars.length,0);
@@ -1268,8 +1286,7 @@ function selectItem(iid){
   if(!it){$('insp').classList.remove('show');drawSelBox();return;}
   const f=FByID[it.f];
   $('inName').textContent=f.n+((f.vars&&f.vars[it.v])?' · '+f.vars[it.v].n:'');
-  $('inSizeRow').style.display=f.sz?'flex':'none';
-  $('inSize').value=Math.round(it.s*100);
+  $('inSizeRow').style.display='flex';
   const cols=$('inCols');cols.innerHTML='';
   f.vars.forEach((v,i)=>{
     const d=document.createElement('div');
@@ -1294,14 +1311,11 @@ function selectItem(iid){
   drawSelBox();
 }
 function drawSelBox(){
-  const old=roomSvg.querySelector('.selbox');
-  if(old)old.remove();
+  /* friendly golden glow on the selected item — no boxes */
+  Object.values(itemEls).forEach(g=>g.classList.remove('selglow'));
   const it=roomV()&&S.sel?roomV().items.find(x=>x.iid===S.sel):null;
-  if(!it||!itemEls[it.iid])return;
-  const f=FByID[it.f];
-  const g=el('g',{class:'selbox',transform:itXform(it),style:'pointer-events:none'},roomSvg);
-  el('rect',{x:-f.w/2-4,y:-f.h/2-4,width:f.w+8,height:f.h+8,rx:8,fill:'none',
-    stroke:'#e2574c','stroke-width':3,'stroke-dasharray':'8 6'},g);
+  if(it&&itemEls[it.iid])itemEls[it.iid].classList.add('selglow');
+  updateHelper();
 }
 /* inspector actions */
 $('inRot').addEventListener('click',()=>{
@@ -1314,19 +1328,20 @@ $('inDup').addEventListener('click',()=>{
   roomV().items.push(c);pushHist();autosave();renderRoom();selectItem(c.iid);
   sPlace();updBudgetBar();
 });
-$('inUp').addEventListener('click',()=>{const it=selIt();if(!it)return;sTap();it.z+=1;pushHist();autosave();renderRoom();});
-$('inDown').addEventListener('click',()=>{const it=selIt();if(!it)return;sTap();it.z-=1;pushHist();autosave();renderRoom();});
+const inUpEl=$('inUp');if(inUpEl)inUpEl.addEventListener('click',()=>{const it=selIt();if(!it)return;sTap();it.z+=1;pushHist();autosave();renderRoom();});
+const inDownEl=$('inDown');if(inDownEl)inDownEl.addEventListener('click',()=>{const it=selIt();if(!it)return;sTap();it.z-=1;pushHist();autosave();renderRoom();});
 $('inDel').addEventListener('click',()=>{
   const it=selIt();if(!it)return;sDel();
   const r=roomV();r.items=r.items.filter(x=>x.iid!==it.iid);
   S.sel=null;pushHist();autosave();renderRoom();updBudgetBar();
 });
-$('inSize').addEventListener('input',e=>{
+function nudgeSize(d){
   const it=selIt();if(!it)return;
-  it.s=e.target.value/100;
-  const g=itemEls[it.iid];if(g)g.setAttribute('transform',itXform(it));
-});
-$('inSize').addEventListener('change',()=>{pushHist();autosave();});
+  it.s=clamp(+(it.s+d).toFixed(2),.6,1.6);
+  sPop();renderRoom();selectItem(it.iid);pushHist();autosave();
+}
+$('inSizeP').addEventListener('click',()=>nudgeSize(.15));
+$('inSizeM').addEventListener('click',()=>nudgeSize(-.15));
 function selIt(){return roomV()&&S.sel?roomV().items.find(x=>x.iid===S.sel):null;}
 roomSvg.addEventListener('pointerdown',e=>{
   if(e.target===roomSvg||e.target.parentNode===roomSvg&&!e.target.classList.contains('fitem')){
@@ -1432,26 +1447,27 @@ function renderCatalog(){
   let list=FURN.filter(f=>f.cat===curCat);
   if(searchQ)list=FURN.filter(f=>f.n.toLowerCase().includes(searchQ));
   list.forEach(f=>{
-    f.vars.forEach((v,vi)=>{
-      const d=document.createElement('div');
-      d.className='fcard';d.draggable=false;
-      const svg=document.createElementNS(SVGNS,'svg');
-      const pad=10;
-      const vw=f.w+pad*2,vh=f.h+pad*2;
-      svg.setAttribute('viewBox',`${-pad} ${-pad} ${vw} ${vh}`);
-      svg.style.aspectRatio=vw+'/'+vh;
-      const g=el('g',{transform:`translate(${f.w/2},${f.h/2})`},svg);
-      f.draw(g,v);
-      d.appendChild(svg);
-      const nm=document.createElement('div');nm.className='nm';nm.textContent=f.n+(f.vars.length>1?' · '+v.n:'');
-      d.appendChild(nm);
-      if(S.mode==='challenge'){const cst=document.createElement('div');cst.className='cst';cst.textContent=f.cost+'🪙';d.appendChild(cst);}
-      d.addEventListener('pointerdown',e=>{
-        audioInit();e.preventDefault();
-        startCatalogDrag(f,vi,e,d);
-      });
-      box.appendChild(d);
+    const vi=defVar(f.id);
+    const d=document.createElement('div');
+    d.className='fcard';d.draggable=false;
+    const svg=document.createElementNS(SVGNS,'svg');
+    const pad=12;
+    const vw=f.w+pad*2,vh=f.h+pad*2;
+    svg.setAttribute('viewBox',`${-pad} ${-pad} ${vw} ${vh}`);
+    svg.style.aspectRatio=vw+'/'+vh;
+    const defs=el('defs',{},svg);buildFloorDefs(defs);
+    const g=el('g',{transform:`translate(${f.w/2},${f.h/2})`},svg);
+    window.__curG=g;
+    f.draw(g,f.vars[vi]);
+    d.appendChild(svg);
+    const nm=document.createElement('div');nm.className='nm';nm.textContent=f.n;
+    d.appendChild(nm);
+    if(S.mode==='challenge'){const cst=document.createElement('div');cst.className='cst';cst.textContent=f.cost+'🪙';d.appendChild(cst);}
+    d.addEventListener('pointerdown',e=>{
+      audioInit();e.preventDefault();
+      startCatalogDrag(f,vi,e,d);
     });
+    box.appendChild(d);
   });
   if(!box.children.length)box.innerHTML='<p style="grid-column:1/-1;text-align:center;color:#a08a6f;font-weight:600;font-size:.8rem">Nothing found — try another word!</p>';
 }
@@ -1500,14 +1516,17 @@ function startCatalogDrag(f,vi,e,card){
 function placeItem(f,vi,x,y){
   const r=roomV();if(!r)return;
   const it={iid:'i'+Date.now()+Math.floor(R()*999),f:f.id,v:vi,x:clamp(x,20,r.w*TILE-20),y:clamp(y,20,r.h*TILE-20),
-    r:0,s:1,z:r.items.length,c:null};
+    r:0,s:1,z:f.under?0:f.wall?1:(2+r.items.filter(q=>{const fd=FByID[q.f];return fd&&!fd.under&&!fd.wall;}).length),c:null};
   if(f.wall)snapToWall(it);
   if(S.snap){it.x=Math.round(it.x/15)*15;it.y=Math.round(it.y/15)*15;}
   pushHist();
   r.items.push(it);
   autosave();sPlace();
   renderRoom();selectItem(it.iid);
+  const ng=itemEls[it.iid];
+  if(ng)ng.classList.add('poppin');
   updBudgetBar();
+  updateHelper();
 }
 $('searchIn').addEventListener('input',e=>{
   searchQ=e.target.value.trim().toLowerCase();
@@ -1821,6 +1840,16 @@ addEventListener('keydown',e=>{
 load();
 $('profBtn').textContent='👤 Player 1';
 renderGallery();
+
+function updateHelper(){
+  const chip=$('helperChip');
+  if(!chip)return;
+  const r=roomV();
+  if(S.sel){chip.textContent='🎉 Tap 🔄 to turn it · dots to recolour · 🗑 to remove';chip.style.borderColor='#ffb64d';}
+  else if(r&&!r.items.length){chip.textContent='👆 Pick furniture below — tap a card to add it!';chip.style.borderColor='#9cc4d4';}
+  else if(r){chip.textContent='Tap any item to change it 🎨 or drag to move ✋';chip.style.borderColor='#9cc4d4';}
+  else chip.style.display='none';
+}
 
 /* ================= test hooks ================= */
 window.__dh={
